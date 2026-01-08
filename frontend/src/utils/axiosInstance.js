@@ -2,6 +2,7 @@ import axios from "axios";
 import { BASE_URL } from "./apiPaths";
 
 const axiosInstance = axios.create({
+    // baseURL: import.meta.env.VITE_API_URL,
     baseURL: BASE_URL,
     timeout: 80000,
     headers: {
@@ -31,19 +32,23 @@ axiosInstance.interceptors.response.use(
     },
     (error) => {
         // Handle common errors globally
-        if(error.response){
-            if(error.response.status === 401){
+        if (error.response) {
+            if (error.response.status === 401) {
                 // Redirect to the login page
                 window.location.href = "/";
-            } else if(error.response.status === 500){
+            } else if (error.response.status === 500) {
                 console.error("Server error. Please try again later.");
             }
-        } else if(error.code === "ECONNABORTED"){
+        } else if (error.code === "ECONNABORTED") {
             console.error("Request timeout. Please try again.");
         }
         return Promise.regect(error);
     }
 
 );
+
+
+
+
 
 export default axiosInstance;
