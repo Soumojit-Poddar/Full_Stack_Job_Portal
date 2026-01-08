@@ -17,14 +17,18 @@ const app = express();
 //Middleware to handle CORS
 app.use(
     cors({
-        origin: "*",
+        origin: [
+            "http://localhost:5173",
+            "https://your-frontend.vercel.app"
+        ],
+        credentials: true,
         methods: ["GET", "POST", "PUT", "DELETE"],
         allowedHeaders: ["Content-Type", "Authorization"],
     })
 );
 
 //Connect Database
-connectDB();
+// connectDB();
 
 //Middleware
 app.use(express.json());
@@ -37,11 +41,32 @@ app.use("/api/applications", applicationRoutes);
 app.use("/api/save-jobs", savedJobsRoutes);
 app.use("/api/analytics", analyticsRoutes);
 
+app.get("/", (req, res) => {
+  res.status(200).send("Backend is running");
+});
+
+
 
 
 //Serve uploads folder
 app.use("/uploads", express.static(path.join(__dirname, "uploads"), {}));
 
 //Start Server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Serverrunning on port ${PORT}`));
+/* ================= START SERVER ================= */
+
+const startServer = async () => {
+  try {
+    await connectDB();
+    console.log("MongoDB connected");
+
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () =>
+      console.log(`Server running on port ${PORT}`)
+    );
+  } catch (error) {
+    console.error("Failed to start server:", error);
+    process.exit(1);
+  }
+};
+
+startServer();
